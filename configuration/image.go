@@ -3,8 +3,10 @@ package configuration
 // Based on https://github.com/philpearl/scratchbuild/blob/master/types.go
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"stackoverflow-docker/tools"
 	"time"
 )
 
@@ -41,8 +43,8 @@ type ImageConfig struct {
 type RootFS struct {
 	// Type is the type of the rootfs.
 	Type string `json:"type"`
-	// DiffIDS is a layer conten hashes # TODO make it an array
-	DiffIDS string `json:"diff_ids"`
+	// DiffIDS is a layer conten hashes
+	DiffIDS []tools.Hash `json:"diff_ids"`
 }
 
 type History struct {

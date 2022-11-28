@@ -1,8 +1,11 @@
 package configuration
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+
+	"stackoverflow-docker/tools"
 )
 
 // Based on https://github.com/philpearl/scratchbuild/blob/master/types.go
@@ -18,7 +21,7 @@ type Descriptor struct {
 
 	// Digest uniquely identifies the content. A byte stream can be verified
 	// against this digest.
-	Digest string `json:"digest,omitempty"`
+	Digest tools.Hash `json:"digest,omitempty"`
 
 	// URLs contains the source URLs of this content.
 	URLs []string `json:"urls,omitempty"`
