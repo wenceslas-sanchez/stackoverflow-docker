@@ -79,3 +79,11 @@ func (i *Image) ToString() (string, error) {
 	}
 	return string(out), nil
 }
+
+func (i *Image) ToBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	if err := json.NewEncoder(&buffer).Encode(&i); err != nil {
+		return nil, fmt.Errorf("cannot marshalize the image: %q", err)
+	}
+	return buffer.Bytes(), nil
+}

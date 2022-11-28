@@ -1,5 +1,6 @@
 package configuration
 
 type File interface {
-	ToString() string
+	ToString() (string, error)
+	ToBytes() ([]byte, error)
 }

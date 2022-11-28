@@ -43,3 +43,11 @@ func (m *Manifest) ToString() (string, error) {
 	}
 	return string(out), nil
 }
+
+func (m *Manifest) ToBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	if err := json.NewEncoder(&buffer).Encode(&m); err != nil {
+		return nil, fmt.Errorf("cannot marshalize the manifest: %q", err)
+	}
+	return buffer.Bytes(), nil
+}
