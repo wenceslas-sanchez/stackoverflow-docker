@@ -3,6 +3,8 @@ package configuration
 // Based on https://github.com/philpearl/scratchbuild/blob/master/types.go
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -68,4 +70,12 @@ type Image struct {
 	Config       ImageConfig `json:"config,omitempty"`
 	RootFS       RootFS      `json:"rootfs"`
 	History      []History   `json:"history,omitempty"`
+}
+
+func (i *Image) ToString() (string, error) {
+	out, err := json.Marshal(&i)
+	if err != nil {
+		return "", fmt.Errorf("cannot marshalize the image: %q", err)
+	}
+	return string(out), nil
 }

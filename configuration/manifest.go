@@ -1,5 +1,10 @@
 package configuration
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 // Based on https://github.com/philpearl/scratchbuild/blob/master/types.go
 
 // Descriptor contains a reference to a blob
@@ -29,4 +34,12 @@ type Manifest struct {
 	// Layers lists descriptors for the layers referenced by the
 	// configuration.
 	Layers []Descriptor `json:"layers"`
+}
+
+func (m *Manifest) ToString() (string, error) {
+	out, err := json.Marshal(&m)
+	if err != nil {
+		return "", fmt.Errorf("cannot marshalize the manifest: %q", err)
+	}
+	return string(out), nil
 }
