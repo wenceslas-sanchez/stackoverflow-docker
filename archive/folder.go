@@ -18,9 +18,7 @@ func FromFolder(path, archiveName string) (err error) {
 	if err != nil {
 		return err
 	}
-	defer func() {
-		err = file.Close()
-	}()
+	defer file.Close()
 
 	if _, err := file.Write(buffer.Bytes()); err != nil {
 		return err
@@ -28,15 +26,13 @@ func FromFolder(path, archiveName string) (err error) {
 	return nil
 }
 
-func createFromFolder(path string) (buffer *bytes.Buffer, err error) {
-	gw := gzip.NewWriter(buffer)
-	defer func() {
-		err = gw.Close()
-	}()
+func createFromFolder(path string) (*bytes.Buffer, error) {
+	var buffer bytes.Buffer
+
+	gw := gzip.NewWriter(&buffer)
+	defer gw.Close()
 	tw := tar.NewWriter(gw)
-	defer func() {
-		err = tw.Close()
-	}()
+	defer tw.Close()
 
 	walker := func(file string, fi os.FileInfo, err error) error {
 		header, err := tar.FileInfoHeader(fi, file)
@@ -53,14 +49,10 @@ func createFromFolder(path string) (buffer *bytes.Buffer, err error) {
 			if err != nil {
 				return err
 			}
-			defer func() {
-				err = content.Close()
-			}()
 
 			if _, err := io.Copy(tw, content); err != nil {
 				return err
 			}
-
 		}
 
 		return nil
@@ -69,5 +61,5 @@ func createFromFolder(path string) (buffer *bytes.Buffer, err error) {
 		return nil, err
 	}
 
-	return buffer, nil
+	return &buffer, nil
 }
