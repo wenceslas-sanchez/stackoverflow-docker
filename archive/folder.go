@@ -9,12 +9,12 @@ import (
 	"path/filepath"
 )
 
-func FromFolder(path, archive_name string) (err error) {
+func FromFolder(path, archiveName string) (err error) {
 	buffer, err := createFromFolder(path)
 	if err != nil {
 		return err
 	}
-	file, err := os.Create(archive_name)
+	file, err := os.Create(archiveName)
 	if err != nil {
 		return err
 	}
