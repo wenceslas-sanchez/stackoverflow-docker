@@ -3,7 +3,6 @@ package configuration
 // Based on https://github.com/philpearl/scratchbuild/blob/master/types.go
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"stackoverflow-docker/tools"
@@ -75,17 +74,17 @@ type Image struct {
 }
 
 func (i *Image) ToString() (string, error) {
-	out, err := json.Marshal(&i)
+	out, err := i.ToBytes()
 	if err != nil {
-		return "", fmt.Errorf("cannot marshalize the image: %q", err)
+		return "", err
 	}
 	return string(out), nil
 }
 
 func (i *Image) ToBytes() ([]byte, error) {
-	var buffer bytes.Buffer
-	if err := json.NewEncoder(&buffer).Encode(&i); err != nil {
+	out, err := json.Marshal(&i)
+	if err != nil {
 		return nil, fmt.Errorf("cannot marshalize the image: %q", err)
 	}
-	return buffer.Bytes(), nil
+	return out, nil
 }

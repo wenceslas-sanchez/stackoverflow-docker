@@ -1,7 +1,6 @@
 package configuration
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -40,17 +39,17 @@ type Manifest struct {
 }
 
 func (m *Manifest) ToString() (string, error) {
-	out, err := json.Marshal(&m)
+	out, err := m.ToBytes()
 	if err != nil {
-		return "", fmt.Errorf("cannot marshalize the manifest: %q", err)
+		return "", err
 	}
 	return string(out), nil
 }
 
 func (m *Manifest) ToBytes() ([]byte, error) {
-	var buffer bytes.Buffer
-	if err := json.NewEncoder(&buffer).Encode(&m); err != nil {
+	out, err := json.Marshal(&m)
+	if err != nil {
 		return nil, fmt.Errorf("cannot marshalize the manifest: %q", err)
 	}
-	return buffer.Bytes(), nil
+	return out, nil
 }
