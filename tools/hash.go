@@ -1,14 +1,17 @@
 package tools
 
-import "crypto/sha256"
+import (
+	"crypto/sha256"
+	"fmt"
+)
 
 type Hash string
 
 func Digest(content []byte) Hash {
-	return Hash(hash(content))
+	return Hash(fmt.Sprintf("sha256:%x", hash(content)))
 }
 
-func hash(content []byte) []byte {
-	hash := sha256.Sum256(content)
-	return hash[:]
+// For the moment, only SHA256 is supported for the simplicity
+func hash(content []byte) [sha256.Size]byte {
+	return sha256.Sum256(content)
 }
