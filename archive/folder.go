@@ -4,34 +4,48 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"stackoverflow-docker/tools"
 )
 
-func FromFolder(path, archiveName string) (err error) {
-	buffer, err := createFromFolder(path)
-	if err != nil {
-		return err
+type Compressed struct {
+	Content        []byte
+	Digest         tools.Hash
+	CompressDigest tools.Hash
+}
+
+func FromFolder(path, archiveName string) (*Compressed, error) {
+	tarBuffer := bytes.Buffer{}
+	gzipBuffer := bytes.Buffer{}
+
+	if err := buildTar(path, &tarBuffer); err != nil {
+		return nil, err
 	}
+
+	content := tarBuffer.Bytes()
+	if err := compressToGzip(content, &gzipBuffer); err != nil {
+		return nil, err
+	}
+
 	file, err := os.Create(archiveName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer file.Close()
 
-	if _, err := file.Write(buffer.Bytes()); err != nil {
-		return err
+	b := gzipBuffer.Bytes()
+	if _, err := file.Write(b); err != nil {
+		return nil, err
 	}
-	return nil
+
+	return nil, nil
 }
 
-func createFromFolder(path string) (*bytes.Buffer, error) {
-	var buffer bytes.Buffer
-
-	gw := gzip.NewWriter(&buffer)
-	defer gw.Close()
-	tw := tar.NewWriter(gw)
+func buildTar(path string, w io.Writer) error {
+	tw := tar.NewWriter(w)
 	defer tw.Close()
 
 	walker := func(file string, fi os.FileInfo, err error) error {
@@ -58,8 +72,20 @@ func createFromFolder(path string) (*bytes.Buffer, error) {
 		return nil
 	}
 	if err := filepath.Walk(path, walker); err != nil {
-		return nil, err
+		return err
 	}
 
-	return &buffer, nil
+	return nil
+}
+
+func compressToGzip(content []byte, w io.Writer) error {
+	gw := gzip.NewWriter(w)
+	if _, err := gw.Write(content); err != nil {
+		return fmt.Errorf("can't compress content: %w", err)
+	}
+	if err := gw.Close(); err != nil {
+		return fmt.Errorf("can't compress content: %w", err)
+	}
+
+	return nil
 }
