@@ -12,9 +12,8 @@ import (
 )
 
 type Compressed struct {
-	Content        []byte
-	Digest         tools.Hash
-	CompressDigest tools.Hash
+	Digest  tools.Hash
+	DigestC tools.Hash
 }
 
 func FromFolder(path, archiveName string) (*Compressed, error) {
@@ -36,12 +35,12 @@ func FromFolder(path, archiveName string) (*Compressed, error) {
 	}
 	defer file.Close()
 
-	b := gzipBuffer.Bytes()
-	if _, err := file.Write(b); err != nil {
+	contentGzip := gzipBuffer.Bytes()
+	if _, err := file.Write(contentGzip); err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return &Compressed{tools.Digest(content), tools.Digest(contentGzip)}, nil
 }
 
 func buildTar(path string, w io.Writer) error {
