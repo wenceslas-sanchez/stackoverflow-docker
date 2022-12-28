@@ -8,15 +8,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"stackoverflow-docker/tools"
+
+	"stackoverflow-docker/archive/metadata"
 )
 
-type Compressed struct {
-	Digest  tools.Hash
-	DigestC tools.Hash
-}
-
-func FromFolder(path, archiveName string) (*Compressed, error) {
+func FromFolder(path, archiveName string) (*metadata.Pile, error) {
 	tarBuffer := bytes.Buffer{}
 	gzipBuffer := bytes.Buffer{}
 
@@ -39,8 +35,9 @@ func FromFolder(path, archiveName string) (*Compressed, error) {
 	if _, err := file.Write(contentGzip); err != nil {
 		return nil, err
 	}
+	pile := metadata.New(content, contentGzip)
 
-	return &Compressed{tools.Digest(content), tools.Digest(contentGzip)}, nil
+	return &pile, nil
 }
 
 func buildTar(path string, w io.Writer) error {
