@@ -73,14 +73,6 @@ type Image struct {
 	History      []History   `json:"history,omitempty"`
 }
 
-func (i *Image) ToString() (string, error) {
-	out, err := i.ToBytes()
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
-}
-
 func (i *Image) ToBytes() ([]byte, error) {
 	out, err := json.Marshal(&i)
 	if err != nil {

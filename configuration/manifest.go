@@ -38,14 +38,6 @@ type Manifest struct {
 	Layers []Descriptor `json:"layers"`
 }
 
-func (m *Manifest) ToString() (string, error) {
-	out, err := m.ToBytes()
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
-}
-
 func (m *Manifest) ToBytes() ([]byte, error) {
 	out, err := json.Marshal(&m)
 	if err != nil {
