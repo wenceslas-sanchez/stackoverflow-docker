@@ -7,7 +7,6 @@ import (
 )
 
 type File interface {
-	ToString() (string, error)
 	ToBytes() ([]byte, error)
 }
 
